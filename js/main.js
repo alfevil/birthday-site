@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 /* ══ SUPABASE INIT ════════════════════════ */
 const SUPABASE_URL = 'https://uhnynivvdiyptfqafqda.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVobnluaXZ2ZGl5cHRmcWFmcWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NjkzMzAsImV4cCI6MjA4OTQ0NTMzMH0.uun0-0cekYqHSjPQHJSHR1W4XC5lO40a7Euxo44_Y_k';
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 /* ══ CURSOR ══════════════════════════════ */
 (function initCursor() {
@@ -359,8 +359,8 @@ async function submitForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ chat_id: '482123499', text, parse_mode: 'MarkdownV2' })
     });
-    if (supabase) {
-      supabase.from('rsvps').insert([{ name, alco, food, note }]).then();
+    if (supabaseClient) {
+      supabaseClient.from('rsvps').insert([{ name, alco, food, note }]).then();
     }
   } catch (e) { console.error('Submit error:', e); }
 
@@ -457,9 +457,9 @@ function initSakura() {
 let musicQueueState = [];
 
 function initMusicQueue() {
-  if (supabase) {
+  if (supabaseClient) {
     loadMusicQueue();
-    supabase.channel('public:music_queue')
+    supabaseClient.channel('public:music_queue')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'music_queue' }, loadMusicQueue)
       .subscribe();
   } else {
@@ -470,8 +470,8 @@ function initMusicQueue() {
 }
 
 async function loadMusicQueue() {
-  if (!supabase) return;
-  const { data, error } = await supabase.from('music_queue').select('*');
+  if (!supabaseClient) return;
+  const { data, error } = await supabaseClient.from('music_queue').select('*');
   if (!error && data) {
     musicQueueState = data;
     renderQueue();
@@ -489,8 +489,8 @@ async function likeTrack(id) {
     track.likes = (track.likes || 0) + 1;
     renderQueue();
     // Server update
-    if (supabase) {
-      await supabase.from('music_queue').update({ likes: track.likes }).eq('id', id);
+    if (supabaseClient) {
+      await supabaseClient.from('music_queue').update({ likes: track.likes }).eq('id', id);
     } else {
       try { localStorage.setItem('bd_music', JSON.stringify(musicQueueState)); } catch (e) { }
     }
@@ -523,8 +523,8 @@ function addTrack() {
   musicQueueState.push(trackObj);
   renderQueue();
 
-  if (supabase) {
-    supabase.from('music_queue').insert([trackObj]).then();
+  if (supabaseClient) {
+    supabaseClient.from('music_queue').insert([trackObj]).then();
   } else {
     try { localStorage.setItem('bd_music', JSON.stringify(musicQueueState)); } catch (e) { }
   }
@@ -637,8 +637,8 @@ async function markPlayed(id) {
   if (track) {
     track.played = true;
     renderQueue();
-    if (supabase) {
-      await supabase.from('music_queue').update({ played: true }).eq('id', id);
+    if (supabaseClient) {
+      await supabaseClient.from('music_queue').update({ played: true }).eq('id', id);
     } else {
       try { localStorage.setItem('bd_music', JSON.stringify(musicQueueState)); } catch (e) { }
     }
@@ -648,8 +648,8 @@ async function markPlayed(id) {
 async function deleteTrack(id) {
   musicQueueState = musicQueueState.filter(m => m.id !== id);
   renderQueue();
-  if (supabase) {
-    await supabase.from('music_queue').delete().eq('id', id);
+  if (supabaseClient) {
+    await supabaseClient.from('music_queue').delete().eq('id', id);
   } else {
     try { localStorage.setItem('bd_music', JSON.stringify(musicQueueState)); } catch (e) { }
   }
@@ -660,8 +660,8 @@ async function clearPlayedTracks() {
   musicQueueState = musicQueueState.filter(m => !m.played);
   renderQueue();
 
-  if (supabase && toDelete.length > 0) {
-    await supabase.from('music_queue').delete().in('id', toDelete);
+  if (supabaseClient && toDelete.length > 0) {
+    await supabaseClient.from('music_queue').delete().in('id', toDelete);
   } else {
     try { localStorage.setItem('bd_music', JSON.stringify(musicQueueState)); } catch (e) { }
   }
@@ -709,9 +709,9 @@ function initWheel() {
   renderWheelList();
   drawWheel();
 
-  if (supabase) {
+  if (supabaseClient) {
     loadWheelHistory();
-    supabase.channel('public:wheel_history')
+    supabaseClient.channel('public:wheel_history')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'wheel_history' }, loadWheelHistory)
       .subscribe();
   } else {
@@ -728,8 +728,8 @@ function initWheel() {
 }
 
 async function loadWheelHistory() {
-  if (!supabase) return;
-  const { data, error } = await supabase.from('wheel_history')
+  if (!supabaseClient) return;
+  const { data, error } = await supabaseClient.from('wheel_history')
     .select('result_text')
     .order('created_at', { ascending: false })
     .limit(5);
@@ -764,8 +764,8 @@ function saveWheelHistory(res) {
   if (wheelHistoryState.length > 5) wheelHistoryState = wheelHistoryState.slice(0, 5);
   renderWheelHistory();
 
-  if (supabase) {
-    supabase.from('wheel_history').insert([{ result_text: res }]).then();
+  if (supabaseClient) {
+    supabaseClient.from('wheel_history').insert([{ result_text: res }]).then();
   } else {
     try { localStorage.setItem('bd_wheel_history', JSON.stringify(wheelHistoryState)); } catch (e) { }
   }
