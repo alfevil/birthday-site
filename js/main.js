@@ -954,7 +954,9 @@ function performSpin(origText) {
       currentRotation = finalRotation % 360;
       isSpinning = false;
       btn.disabled = false;
-      btn.querySelector('span').textContent = origText;
+      const span = btn.querySelector('span');
+      span.textContent = origText;
+      gsap.set(span, { opacity: 1, scale: 1 });
       canvas.style.transform = `rotate(${currentRotation}deg)`;
 
       saveWheelHistory(wItems[randomWinner]);
