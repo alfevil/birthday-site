@@ -352,12 +352,12 @@ async function submitForm() {
   const note = document.getElementById('f-note').value.trim();
 
   // Telegram Notification
-  const text = `🎉 *Новая анкета\!*\n\n👤 *Имя:* ${name}\n🍷 *Алкоголь:* ${alco || 'Нет'}\n🥩 *Еда:* ${food || 'Нет'}\n📝 *Пожелания:* ${note || 'Нет'}`;
+  const text = `🎉 <b>Новая анкета!</b>\n\n👤 <b>Имя:</b> ${name}\n🍷 <b>Алкоголь:</b> ${alco || 'Нет'}\n🥩 <b>Еда:</b> ${food || 'Нет'}\n📝 <b>Пожелания:</b> ${note || 'Нет'}`;
   try {
     fetch('https://api.telegram.org/bot8604572335:AAFzNyOFVntFymyKo73LH70ZOXf3S-3vew8/sendMessage', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: '482123499', text, parse_mode: 'MarkdownV2' })
+      body: JSON.stringify({ chat_id: '482123499', text, parse_mode: 'HTML' })
     });
     if (supabaseClient) {
       supabaseClient.from('rsvps').insert([{ name, alco, food, note }]).then();
