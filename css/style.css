@@ -584,6 +584,38 @@ body:has(.magnetic-btn:hover) .cursor-follower {
   margin-bottom: 16px;
 }
 
+@media(max-width: 600px) {
+  .hero-meta {
+    gap: 6px;
+    padding: 0 10px;
+  }
+
+  .meta-pill {
+    padding: 8px 12px;
+    font-size: 0.72rem;
+  }
+
+  .countdown {
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .cd-unit {
+    padding: 10px 12px;
+    min-width: 65px;
+    border-radius: 12px;
+  }
+
+  .cd-num {
+    font-size: 1.8rem;
+  }
+
+  .cd-sep {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+}
+
 .hero-scroll {
   position: absolute;
   bottom: 32px;
@@ -2161,30 +2193,6 @@ footer p {
   transition: transform 0.3s ease;
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .sakura-petal {
-    display: none;
-  }
-
-  .hero-bg-number {
-    animation: none;
-  }
-
-  .marquee-content {
-    animation: none;
-  }
-}
 
 /* Wheel history */
 .wheel-history {
